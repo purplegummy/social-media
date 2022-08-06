@@ -12,6 +12,7 @@ export const Login = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         login(emailRef.current.value, passwordRef.current.value);
+
         navigate('/account');
     }
   return (

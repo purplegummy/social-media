@@ -11,8 +11,8 @@ const {
 
 router.post('/', registerUser);
 router.post('/login', loginUser);
-router.get('/user', protect, getUser);
-router.put('/updateAvatar', protect, setAvatarImage)
+router.get('/me', protect, getUser);
+router.put('/setAvatar',protect, setAvatarImage)
 
 
 module.exports = router;

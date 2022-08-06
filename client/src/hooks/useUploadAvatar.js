@@ -5,6 +5,7 @@ import { uploadBytesResumable, getDownloadURL,ref } from 'firebase/storage';
 import axios from 'axios'
 export const useUploadAvatar = () => {
     const {user} = useAuth();
+    const [imgURL, setImgURL] = useState(user ? user.avatarImageURL : '');
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(null);
     const uploadAvatar = (file) => {
@@ -37,21 +38,24 @@ export const useUploadAvatar = () => {
           console.log("Success");
           getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
             // send post request with download url to server
-            axios.put('http://localhost:4000/api/users/setAvatar', {avatarImageURL: downloadURL},{withCredentials:true}).then((res)=> {
+            const token = JSON.parse(localStorage.getItem('user')).token;
+
+            axios.put('http://localhost:4000/api/users/setAvatar', {avatarImageURL: downloadURL},{headers: { 
+              'authorization': `Bearer ${token}`}}).then((res)=> {
               if (res.status === 400){
                 setError(res.err);
               } 
               if (res.status === 204 ){
-                setError(res.body.message);
+                setError('');
               };
             })
             setLoading(false);
-            return downloadURL;
+            setImgURL(downloadURL);
             
           });
         }
       );
     }
-    return {uploadAvatar, loading, error};
+    return {imgURL, uploadAvatar, loading, error};
   }
   

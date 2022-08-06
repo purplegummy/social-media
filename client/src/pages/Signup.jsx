@@ -1,10 +1,8 @@
 import { useRef} from 'react';
 import { Card, Form, Button, Alert } from 'react-bootstrap';
 import {Link} from 'react-router-dom';
-import {useAuth} from '../contexts/AuthContext';
 import {useSignup} from '../hooks/useSignup'
 export const Signup = () => {
-    const {user} = useAuth();
     const {signup,error,loading} = useSignup();
     const displayNameRef = useRef();
     const emailRef = useRef();

@@ -11,8 +11,7 @@ export const useLogin = () => {
       setLoading(true);
       const data = {email, password}
       axios.post('http://localhost:4000/api/users/login', data, {withCredentials:true}).then((res)=> {
-        if (res.status !== 200){
-        
+        if (res.status === 403){
             setError(res.error);
         } else {
             

@@ -24,6 +24,11 @@ app.use(bodyParser.json({extended:true}));
 app.use(cors({
     credentials: true,
     origin: 'http://localhost:3000',
+    AccessControlAllowMethods: "*",
+    
+    
+   
+
 }));
 const port = 4000;
 

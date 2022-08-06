@@ -60,7 +60,11 @@ const registerUser = asyncHandler(async (req,res) => {
 const loginUser = asyncHandler(async (req,res) => {
     const {email, password} = req.body;
     const user = await User.findOne({email});
-    const isNotWrongCred =await bcrypt.compare(password, user.password);
+    if (!user){
+        res.status(403).json({error: 'Password or email is incorrect.'});
+        return;
+    }
+    const isNotWrongCred =await bcrypt.compare(password,user.password);
     if (user && isNotWrongCred){
         res.status(200).json({
             id: user.id,
@@ -69,12 +73,14 @@ const loginUser = asyncHandler(async (req,res) => {
             avatarImageURL: user.avatarImageURL,
             token: generateToken(user.id),
         })
+        return;
     } 
     if (!isNotWrongCred) {
         res.status(403).json({error: 'Password or email is incorrect.'});
-    
+        return;
     } else {
-        res.status(400).json({error: 'invalid data.'});
+        res.status(403).json({error: 'invalid data.'});
+        return;
     
     }
 
@@ -82,13 +88,15 @@ const loginUser = asyncHandler(async (req,res) => {
 })
 
 const getUser = asyncHandler(async (req,res) => {
-    const {id, displayName, email} = await User.findById(req.user.id);
+    const {id, displayName, email, avatarImageURL} = await User.findById(req.user.id);
 
     res.status(200).json({
         id,
         email,
-        displayName
+        displayName,
+        avatarImageURL,
     })
+ 
 })
 
 
@@ -97,13 +105,13 @@ const setAvatarImage = asyncHandler(async (req,res) => {
     const user = await User.findByIdAndUpdate(req.user.id, {avatarImageURL});
 
     if (user){
-        res.status(204).json({
-            message: `Successfully updated ${user.displayName}'s avatar.`
-        })
+        res.status(204);
+        res.end();
     } else {
         res.status(400).json({
             error: 'We could not update the image for the user.'
         })
+        throw new Error('We could not update the image for the user.');
     }
 
 
